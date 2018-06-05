@@ -1,13 +1,22 @@
 package com.company;
 
-import java.util.List;
+import static org.junit.Assert.assertNotNull;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.activiti.bpmn.model.Task;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
 
 import com.company.db.DB;
 import com.company.db.Films;
@@ -40,18 +49,23 @@ public class WindowController {
 	@FXML
 	Text confirmText;
 	@FXML
-	ChoiceBox filmChoiceBox;
+	ChoiceBox<String> filmChoiceBox;
 	@FXML
 	Text filmChoiceText;
 	
-	
-	private  ProcessEngine processEngine;
+	private String filename = "C:\\Users\\student\\Desktop\\miasii\\MIASI\\src\\main\\resources\\diagrams\\process.bpmn";
+	public static  ProcessEngine processEngine;
 	private  ProcessEngineConfiguration cfg;
 	private  RepositoryService repositoryService;
 	private   Deployment deployment;
 	private  ProcessDefinition processDefinition;
 	private DB db = new DB();
-	public void initialize(){
+	private Map<String, Object> variableMap = new HashMap<String, Object>();
+	private ProcessInstance processInstance;
+	public static List<Films> listfilms;
+	public static String selectedFilm;
+	public static Integer ticketAmount;
+	public void initialize() throws FileNotFoundException{
 		cfg = new StandaloneProcessEngineConfiguration()
 			      .setJdbcUrl("jdbc:postgresql://localhost:5432/miasi?characterEncoding=utf-8")
 			      .setJdbcUsername("postgres")
@@ -60,19 +74,15 @@ public class WindowController {
 			      .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
 		
 		processEngine = cfg.buildProcessEngine();
-		repositoryService = processEngine.getRepositoryService();
-		
-		deployment = repositoryService.createDeployment()
-		        .addClasspathResource("diagrams/process.bpmn").deploy();
-		
-		processDefinition = repositoryService.createProcessDefinitionQuery()
-		        .deploymentId(deployment.getId()).singleResult();
-		
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+		repositoryService.createDeployment().addInputStream("myProcess.bpmn20.xml", new FileInputStream(filename))
+				.deploy();
+		RuntimeService runtimeService = processEngine.getRuntimeService();
+		variableMap.put("name", "Activiti");
 		for(int i=1;i<10;i++){
 			ticketNumberChoiceBox.getItems().add(i);
         }
-		
-		List<Films> listfilms = db.getFilms();
+		listfilms = db.getAllFilms();
 		for(Films f : listfilms){
 			filmChoiceBox.getItems().add(f.getNazwa_filmu());
 		}
@@ -91,11 +101,20 @@ public class WindowController {
          dialog.setScene(dialogScene);
          dialog.show();*/
 		 hideShowItems();
+		 
+			variableMap.put("email", emailTextField.getText());
+			selectedFilm = filmChoiceBox.getValue();
+			ticketAmount = ticketNumberChoiceBox.getValue(); 
 		
 		 //}
 	
 	
-		 confirmText.setText( processDefinition.getName());
+		 //confirmText.setText( processDefinition.getName());
+		 
+		 RuntimeService runtimeService = processEngine.getRuntimeService();
+		 processInstance = runtimeService.startProcessInstanceByKey("myProcess", variableMap);
+			assertNotNull(processInstance.getId());
+			System.out.println("id " + processInstance.getId() + " " + processInstance.getProcessDefinitionId());
          
 	 }
 	 
@@ -120,6 +139,9 @@ public class WindowController {
 	 
 	 @FXML
 	  private void confirmOrder(){
+		 List<org.activiti.engine.task.Task> tasks = processEngine.getTaskService().createTaskQuery().taskDefinitionKey("usertask1").list();
+		 variableMap.put("confirmation", true);
+		 processEngine.getTaskService().complete(tasks.get(0).getId(), variableMap);
 		 System.exit(1);
 	 }
 	

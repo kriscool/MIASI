@@ -19,7 +19,7 @@ public class DB {
 		session.close();
 	}
 	
-	public List<Films> getFilms(){
+	public List<Films> getAllFilms(){
 		session.beginTransaction();
 		List<Films> q = session.createQuery("FROM films").list();
 		session.getTransaction().commit();
@@ -27,4 +27,29 @@ public class DB {
 		return q;
 		
 	}
+	
+	public Films getFilm(int id){
+		session.beginTransaction();
+		Films q = session.load(Films.class, id);
+		session.getTransaction().commit();
+		session.close();
+		return q;
+		
+	}
+	
+	public void updateFilm(Films film){
+		session.beginTransaction();
+		session.update(film);
+		session.getTransaction().commit();
+		session.close();
+	}
+	
+	public void deleteFilm(Films film){
+		session.beginTransaction();
+		session.delete(film);
+		session.getTransaction().commit();
+		session.close();
+	}
+	
+	
 }

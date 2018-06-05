@@ -8,6 +8,17 @@ public class SprawdzDostepnosc implements JavaDelegate {
 	
 	@Override
 	public void execute(DelegateExecution arg0) throws Exception {
-		System.out.println("Jakub Olczak");
+		WindowController.processEngine.getRuntimeService().suspendProcessInstanceById(arg0.getProcessInstanceId());
+		for (int a = 0; a < WindowController.listfilms.size(); a++) {
+			if (WindowController.selectedFilm.equals(WindowController.listfilms.get(a).getNazwa_filmu())) {
+				if (WindowController.ticketAmount <= WindowController.listfilms.get(a).getWolne_miejsca()) {
+					arg0.setVariable("available", "true");
+					break;
+				} else {
+					arg0.setVariable("available", "false");
+					break;
+				}
+			}
+		}
 	}
 }

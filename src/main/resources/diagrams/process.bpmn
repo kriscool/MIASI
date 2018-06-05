@@ -25,14 +25,13 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
     </sequenceFlow>
     <serviceTask id="servicetask3" name="Sprawdz dostepnosc" activiti:class="com.company.SprawdzDostepnosc"></serviceTask>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow15" sourceRef="servicetask3" targetRef="exclusivegateway2"></sequenceFlow>
     <serviceTask id="servicetask4" name="Wyświetl informacje o braku dostępności" activiti:class="com.company.WyswietlInformacjeBrakDostepnosci"></serviceTask>
     <sequenceFlow id="flow16" sourceRef="exclusivegateway2" targetRef="servicetask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${available==false}]]></conditionExpression>
     </sequenceFlow>
     <endEvent id="endevent4" name="End"></endEvent>
     <sequenceFlow id="flow17" sourceRef="servicetask4" targetRef="endevent4"></sequenceFlow>
-    <sequenceFlow id="flow18" sourceRef="exclusivegateway2" targetRef="servicetask5">
+    <sequenceFlow id="flow18" sourceRef="exclusivegateway2" targetRef="usertask1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${available==true}]]></conditionExpression>
     </sequenceFlow>
     <serviceTask id="servicetask5" name=" Wyswietl potwierdzenie" activiti:class="com.company.WyswietlPotwierdzenie"></serviceTask>
@@ -47,6 +46,9 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
     <sequenceFlow id="flow23" sourceRef="exclusivegateway3" targetRef="servicetask6">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${confirmation==false}]]></conditionExpression>
     </sequenceFlow>
+    <sequenceFlow id="flow24" sourceRef="servicetask3" targetRef="exclusivegateway2"></sequenceFlow>
+    <userTask id="usertask1" name="Wait for confirmation"></userTask>
+    <sequenceFlow id="flow25" sourceRef="usertask1" targetRef="servicetask5"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess">
     <bpmndi:BPMNPlane bpmnElement="myProcess" id="BPMNPlane_myProcess">
@@ -72,10 +74,10 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
         <omgdc:Bounds height="40.0" width="40.0" x="450.0" y="167.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="servicetask3" id="BPMNShape_servicetask3">
-        <omgdc:Bounds height="75.0" width="105.0" x="569.0" y="150.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="105.0" x="540.0" y="150.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
-        <omgdc:Bounds height="40.0" width="40.0" x="749.0" y="167.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="700.0" y="167.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="servicetask4" id="BPMNShape_servicetask4">
         <omgdc:Bounds height="75.0" width="105.0" x="717.0" y="258.0"></omgdc:Bounds>
@@ -95,6 +97,9 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
         <omgdc:Bounds height="40.0" width="40.0" x="970.0" y="173.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="717.0" y="70.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
         <omgdi:waypoint x="45.0" y="257.0"></omgdi:waypoint>
         <omgdi:waypoint x="101.0" y="221.0"></omgdi:waypoint>
@@ -113,18 +118,14 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
         <omgdi:waypoint x="490.0" y="187.0"></omgdi:waypoint>
-        <omgdi:waypoint x="569.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="540.0" y="187.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
         <omgdi:waypoint x="470.0" y="207.0"></omgdi:waypoint>
         <omgdi:waypoint x="470.0" y="258.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
-        <omgdi:waypoint x="674.0" y="187.0"></omgdi:waypoint>
-        <omgdi:waypoint x="749.0" y="187.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
-        <omgdi:waypoint x="769.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="207.0"></omgdi:waypoint>
         <omgdi:waypoint x="769.0" y="258.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
@@ -132,8 +133,8 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
         <omgdi:waypoint x="769.0" y="410.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
-        <omgdi:waypoint x="789.0" y="187.0"></omgdi:waypoint>
-        <omgdi:waypoint x="821.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="167.0"></omgdi:waypoint>
+        <omgdi:waypoint x="769.0" y="125.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
         <omgdi:waypoint x="982.0" y="345.0"></omgdi:waypoint>
@@ -150,6 +151,14 @@ execution.setVariable("emailCorrect", email.matches(regexStr))</script>
       <bpmndi:BPMNEdge bpmnElement="flow23" id="BPMNEdge_flow23">
         <omgdi:waypoint x="990.0" y="213.0"></omgdi:waypoint>
         <omgdi:waypoint x="982.0" y="270.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
+        <omgdi:waypoint x="645.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="700.0" y="187.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow25" id="BPMNEdge_flow25">
+        <omgdi:waypoint x="769.0" y="125.0"></omgdi:waypoint>
+        <omgdi:waypoint x="873.0" y="150.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

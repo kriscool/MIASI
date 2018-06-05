@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class ProcessTestMyProcess {
 
-	private String filename = "C:\\Users\\student\\Desktop\\MIASI\\src\\main\\resources\\diagrams\\process.bpmn";
+	private String filename = "C:\\Users\\student\\Desktop\\miasii\\MIASI\\src\\main\\resources\\diagrams\\process.bpmn";
 
 	@Rule
 	public ActivitiRule activitiRule = new ActivitiRule();
