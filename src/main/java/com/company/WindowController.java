@@ -7,6 +7,15 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.activiti.bpmn.model.Task;
 import org.activiti.engine.ProcessEngine;
@@ -52,8 +61,9 @@ public class WindowController {
 	ChoiceBox<String> filmChoiceBox;
 	@FXML
 	Text filmChoiceText;
-	
-	private String filename = "C:\\Users\\student\\Desktop\\miasii\\MIASI\\src\\main\\resources\\diagrams\\process.bpmn";
+	public static int numberTicket;
+	public static String film;
+	private String filename = "C:\\Users\\kriscool\\workspace-new\\sado_olczag_krzys\\src\\main\\resources\\diagrams\\process.bpmn";
 	public static  ProcessEngine processEngine;
 	private  ProcessEngineConfiguration cfg;
 	private  RepositoryService repositoryService;
@@ -62,6 +72,7 @@ public class WindowController {
 	private DB db = new DB();
 	private Map<String, Object> variableMap = new HashMap<String, Object>();
 	private ProcessInstance processInstance;
+	public static String email;
 	public static List<Films> listfilms;
 	public static String selectedFilm;
 	public static Integer ticketAmount;
@@ -90,27 +101,13 @@ public class WindowController {
 		
 	}
 	
+
 	 @FXML
 	  private void orderTickets(){
-		 /*if(true) {
-		 final Stage dialog = new Stage();
-         dialog.initModality(Modality.APPLICATION_MODAL);
-         VBox dialogVbox = new VBox(20);
-         dialogVbox.getChildren().add(new Text("This is a Dialog"));
-         Scene dialogScene = new Scene(dialogVbox, 300, 200);
-         dialog.setScene(dialogScene);
-         dialog.show();*/
-		 hideShowItems();
-		 
+		 hideShowItems();	 
 			variableMap.put("email", emailTextField.getText());
 			selectedFilm = filmChoiceBox.getValue();
 			ticketAmount = ticketNumberChoiceBox.getValue(); 
-		
-		 //}
-	
-	
-		 //confirmText.setText( processDefinition.getName());
-		 
 		 RuntimeService runtimeService = processEngine.getRuntimeService();
 		 processInstance = runtimeService.startProcessInstanceByKey("myProcess", variableMap);
 			assertNotNull(processInstance.getId());
@@ -134,15 +131,21 @@ public class WindowController {
 	 }
 	 @FXML
 	  private void cancelOrder(){
-		 System.exit(1);
+		 List<org.activiti.engine.task.Task> tasks = processEngine.getTaskService().createTaskQuery().taskDefinitionKey("usertask1").list();
+		 variableMap.put("confirmation", false);
+		 processEngine.getTaskService().complete(tasks.get(0).getId(), variableMap);
 	 }
 	 
 	 @FXML
 	  private void confirmOrder(){
+		 numberTicket=ticketNumberChoiceBox.getValue();
+		 film=filmChoiceBox.getValue();
+		 email=emailTextField.getText();
+	
 		 List<org.activiti.engine.task.Task> tasks = processEngine.getTaskService().createTaskQuery().taskDefinitionKey("usertask1").list();
 		 variableMap.put("confirmation", true);
 		 processEngine.getTaskService().complete(tasks.get(0).getId(), variableMap);
-		 System.exit(1);
+		 
 	 }
 	
 }
